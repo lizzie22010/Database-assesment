@@ -52,6 +52,30 @@ def print_all_countries():
     db.close()
 
 
+def check_existing_user():
+    '''check if user already exists'''
+    db = sqlite3.connect("phone_usage.db")
+    cursor = db.cursor()
+     # Create a table if it doesn't exist
+    cursor.execute('''CREATE TABLE IF NOT EXISTS phone_usage
+                    (
+                    country TEXT
+                    Average screen time INTEGER
+                )''')
+
+    user = input("Enter your name: ")
+    cursor.execute(
+        '''INSERT INTO entries (user_id,
+        usage) VALUES (?, ?)''',
+        (user, ))
+
+    db.commit()
+    db.close()
+    print('''
+            input accepted''')
+
+
+
 def take_user_input():
     '''add a user intput into the database'''
     db = sqlite3.connect("phone_usage.db")
@@ -63,11 +87,11 @@ def take_user_input():
                     Average screen time INTEGER
                 )''')
 
-    country = input("enter your name:")
-    avg_screen_time = int(input("enter your average screen time:"))
+    country = input("Enter your name: ")
+    avg_screen_time = int(input("Enter your average screen time in minutes: "))
     cursor.execute(
-        '''INSERT INTO phone_usage (country,
-        avg_screen_time) VALUES (?, ?)''',
+        '''INSERT INTO entries (user_id,
+        usage) VALUES (?, ?)''',
         (country, avg_screen_time))
 
     db.commit()
