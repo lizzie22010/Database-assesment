@@ -62,7 +62,7 @@ def check_existing_user():
         cursor.execute(
                 '''INSERT INTO user (
              name) VALUES (?)''',
-                (name))
+                (name,))
     elif user_check == "y":
         name = input("What is your username? ")
     else:
