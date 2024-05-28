@@ -56,36 +56,34 @@ def check_existing_user():
     '''check if user already exists'''
     db = sqlite3.connect("phone_usage.db")
     cursor = db.cursor()
-    # Create a table if it doesn't exist
-    cursor.execute()
-    user = input("Enter your name: ")
-    cursor.execute(
-        '''INSERT INTO entries (user_id,
-        usage) VALUES (?, ?)''',
-        (user, ))
+    user_check = input("Do you already have a username? y/n ")
+    if user_check == "n":
+        name = input("Enter your name to create a new user: ")
+        cursor.execute(
+                '''INSERT INTO user (
+             name) VALUES (?)''',
+                (name))
+    elif user_check == "y":
+        name = input("What is your username? ")
+    else:
+        print("That is not an option")
 
     db.commit()
     db.close()
     print('''
-            input accepted''')
+            username input''')
 
 
 def take_user_input():
     '''add a user intput into the database'''
     db = sqlite3.connect("phone_usage.db")
     cursor = db.cursor()
-    # Create a table if it doesn't exist
-    cursor.execute('''CREATE TABLE IF NOT EXISTS phone_usage
-                   (
-                   country TEXT
-                   Average screen time INTEGER
-                   )''')
-    country = input("Enter your name: ")
+    name = input("Enter your name: ")
     avg_screen_time = int(input("Enter your average screen time in minutes: "))
     cursor.execute(
         '''INSERT INTO entries (user_id,
         usage) VALUES (?, ?)''',
-        (country, avg_screen_time))
+        (name, avg_screen_time))
 
     db.commit()
     db.close()
@@ -111,6 +109,7 @@ while True:
     elif user_input == "2":
         print_all_countries()
     elif user_input == "3":
+        check_existing_user()
         take_user_input()
     elif user_input == "9":
         break
