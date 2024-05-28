@@ -75,7 +75,11 @@ def take_user_input():
     db = sqlite3.connect("phone_usage.db")
     cursor = db.cursor()
     # Create a table if it doesn't exist
-    cursor.execute()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS phone_usage
+                   (
+                   country TEXT
+                   Average screen time INTEGER
+                   )''')
     country = input("Enter your name: ")
     avg_screen_time = int(input("Enter your average screen time in minutes: "))
     cursor.execute(
