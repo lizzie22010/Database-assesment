@@ -56,13 +56,8 @@ def check_existing_user():
     '''check if user already exists'''
     db = sqlite3.connect("phone_usage.db")
     cursor = db.cursor()
-     # Create a table if it doesn't exist
-    cursor.execute('''CREATE TABLE IF NOT EXISTS phone_usage
-                    (
-                    country TEXT
-                    Average screen time INTEGER
-                )''')
-
+    # Create a table if it doesn't exist
+    cursor.execute()
     user = input("Enter your name: ")
     cursor.execute(
         '''INSERT INTO entries (user_id,
@@ -75,18 +70,12 @@ def check_existing_user():
             input accepted''')
 
 
-
 def take_user_input():
     '''add a user intput into the database'''
     db = sqlite3.connect("phone_usage.db")
     cursor = db.cursor()
     # Create a table if it doesn't exist
-    cursor.execute('''CREATE TABLE IF NOT EXISTS phone_usage
-                    (
-                    country TEXT
-                    Average screen time INTEGER
-                )''')
-
+    cursor.execute()
     country = input("Enter your name: ")
     avg_screen_time = int(input("Enter your average screen time in minutes: "))
     cursor.execute(
