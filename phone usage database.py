@@ -4,6 +4,7 @@ import sqlite3
 
 # constants and variables
 DATABASE = "phone_usage.db"
+current_user = None
 
 # functions
 
@@ -52,6 +53,41 @@ def print_all_countries():
     db.close()
 
 
+def login():
+    '''ask for username and/or create new user id'''
+    db = sqlite3.connect("phone_usage.db")
+    cursor = db.cursor()
+    username_ask = input("What is your name?")
+    user = cursor.execute(
+                '''SELECT * FROM user
+                    WHERE name = ?''',
+                (username_ask,)).fetchone()
+    print(user)
+    if user == None:
+        cursor.execute(
+                '''INSERT INTO user (
+             name) VALUES (?)''',
+                (username_ask,))
+        db.commit()
+        current_user = (cursor.lastrowid, username_ask)
+        print(current_user)
+    else:
+        current_user = user
+
+    # if # username exists
+    #     # ask screen time
+    #     # insert into entries table with user id
+    #     # print "screen time _ has been added to user _"
+    # if # username doesn't exist
+    #     # create new user id with the name
+    #     # print "no existing user found; new user created successfully"
+    #     # ask screen time
+    #     # insert into entries table with user id 
+    #     # print "screen time _ has been added to user _"
+           
+    db.commit()
+    db.close()
+
 def check_existing_user():
     '''check if user already exists'''
     db = sqlite3.connect("phone_usage.db")
@@ -91,6 +127,16 @@ def take_user_input():
             input accepted''')
 
 
+def print_users():
+    '''print all of the users with their user id'''
+    db = sqlite3.connect("phone_usage.db")
+    cursor = db.cursor()
+    cursor.execute(
+        '''SELECT * FROM users ''',) # unfinished
+    db.commit()
+    db.close()
+
+
 # main code
 
 
@@ -100,7 +146,8 @@ while True:
     What would you like to do?
     1. Print all data
     2. Print countries leaderboard
-    3. Add a user input
+    3. Log in
+    4. Print users with user id
     9. Exit
 """
     )
@@ -109,8 +156,7 @@ while True:
     elif user_input == "2":
         print_all_countries()
     elif user_input == "3":
-        check_existing_user()
-        take_user_input()
+        login()
     elif user_input == "9":
         break
     else:
