@@ -57,13 +57,13 @@ def login():
     '''ask for username and/or create new user id'''
     db = sqlite3.connect("phone_usage.db")
     cursor = db.cursor()
-    username_ask = input("What is your name?")
+    username_ask = input("What is your name? ")
     user = cursor.execute(
                 '''SELECT * FROM user
                     WHERE name = ?''',
                 (username_ask,)).fetchone()
     print(user)
-    if user == None:
+    if user is None:
         cursor.execute(
                 '''INSERT INTO user (
              name) VALUES (?)''',
@@ -82,11 +82,12 @@ def login():
     #     # create new user id with the name
     #     # print "no existing user found; new user created successfully"
     #     # ask screen time
-    #     # insert into entries table with user id 
+    #     # insert into entries table with user id
     #     # print "screen time _ has been added to user _"
-           
+
     db.commit()
     db.close()
+
 
 def check_existing_user():
     '''check if user already exists'''
@@ -132,7 +133,17 @@ def print_users():
     db = sqlite3.connect("phone_usage.db")
     cursor = db.cursor()
     cursor.execute(
-        '''SELECT * FROM users ''',) # unfinished
+        '''SELECT * FROM user ''',)
+    results = cursor.fetchall()
+    print('''
+
+ID   Username
+          ''')
+    for user in results:
+        print(
+            f"{user[0]:<5}"
+            f"{user[1]:<20}"
+        )  # unfinished
     db.commit()
     db.close()
 
@@ -146,8 +157,8 @@ while True:
     What would you like to do?
     1. Print all data
     2. Print countries leaderboard
-    3. Log in
-    4. Print users with user id
+    3. Print users with user id
+    4. Log in
     9. Exit
 """
     )
@@ -156,6 +167,8 @@ while True:
     elif user_input == "2":
         print_all_countries()
     elif user_input == "3":
+        print_users()
+    elif user_input == "4":
         login()
     elif user_input == "9":
         break
