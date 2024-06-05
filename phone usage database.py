@@ -72,14 +72,13 @@ def login():
         db.commit()
         current_user = (cursor.lastrowid)
         print(current_user)
-        print('No existing user found; new user created successfully')
+        print('No existing user found; new user created successfully\n')
     else:
         current_user = user
     avg_screen_time = int(input("Enter your average screen time in minutes: "))
     cursor.execute(
-        '''INSERT INTO entries (user_id
-    usage) VALUES (?, ?)''',
-        (current_user, avg_screen_time))
+        '''INSERT INTO entries (usage, user_id) VALUES (?, ?)''',
+        (avg_screen_time, current_user[0]))
 
     # if # username exists
     #     # ask screen time
