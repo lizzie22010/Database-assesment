@@ -57,11 +57,12 @@ def login():
     '''ask for username and/or create new user id'''
     db = sqlite3.connect("phone_usage.db")
     cursor = db.cursor()
-    username_ask = input("What is your name? ")
+    username_ask = input("Enter username: ")
+    username_lower = username_ask.lower()
     user = cursor.execute(
                 '''SELECT * FROM user
                     WHERE name = ?''',
-                (username_ask,)).fetchone()
+                (username_lower,)).fetchone()
     print(user)
     if user is None:
         cursor.execute(
@@ -69,10 +70,16 @@ def login():
              name) VALUES (?)''',
                 (username_ask,))
         db.commit()
-        current_user = (cursor.lastrowid, username_ask)
+        current_user = (cursor.lastrowid)
         print(current_user)
+        print('No existing user found; new user created successfully')
     else:
         current_user = user
+    avg_screen_time = int(input("Enter your average screen time in minutes: "))
+    cursor.execute(
+        '''INSERT INTO entries (user_id
+    usage) VALUES (?, ?)''',
+        (current_user, avg_screen_time))
 
     # if # username exists
     #     # ask screen time
@@ -115,12 +122,11 @@ def take_user_input():
     '''add a user intput into the database'''
     db = sqlite3.connect("phone_usage.db")
     cursor = db.cursor()
-    name = input("Enter your name: ")
     avg_screen_time = int(input("Enter your average screen time in minutes: "))
     cursor.execute(
-        '''INSERT INTO entries (user_id,
-        usage) VALUES (?, ?)''',
-        (name, avg_screen_time))
+        '''INSERT INTO entries (
+        usage) VALUES (?,)''',
+        (avg_screen_time))
 
     db.commit()
     db.close()
@@ -149,8 +155,6 @@ ID   Username
 
 
 # main code
-
-
 while True:
     user_input = input(
         """
@@ -158,7 +162,7 @@ while True:
     1. Print all data
     2. Print countries leaderboard
     3. Print users with user id
-    4. Log in
+    4. Add an input
     9. Exit
 """
     )
