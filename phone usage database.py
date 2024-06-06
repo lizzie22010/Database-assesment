@@ -63,7 +63,6 @@ def login():
                 '''SELECT * FROM user
                     WHERE name = ?''',
                 (username_lower,)).fetchone()
-    print(user)
     if user is None:
         cursor.execute(
                 '''INSERT INTO user (
@@ -71,14 +70,15 @@ def login():
                 (username_ask,))
         db.commit()
         current_user = (cursor.lastrowid)
-        print(current_user)
-        print('No existing user found; new user created successfully\n')
+        print('\nNo  user found; new user created\n')
     else:
         current_user = user
-    avg_screen_time = int(input("Enter your average screen time in minutes: "))
+    avg_screen_time = int(input("Enter your screen time in minutes: "))
     cursor.execute(
         '''INSERT INTO entries (usage, user_id) VALUES (?, ?)''',
         (avg_screen_time, current_user[0]))
+    print('''
+          Input accepted''')
 
     # if # username exists
     #     # ask screen time
@@ -130,7 +130,7 @@ def take_user_input():
     db.commit()
     db.close()
     print('''
-            input accepted''')
+            Input accepted''')
 
 
 def print_users():
@@ -143,7 +143,7 @@ def print_users():
     print('''
 
 ID   Username
-          ''')
+        ''')
     for user in results:
         print(
             f"{user[0]:<5}"
@@ -153,6 +153,9 @@ ID   Username
     db.close()
 
 
+def print_user_entries(): # unfinished
+
+
 # main code
 while True:
     user_input = input(
@@ -160,8 +163,9 @@ while True:
     What would you like to do?
     1. Print all data
     2. Print countries leaderboard
-    3. Print users with user id
-    4. Add an input
+    3. Print all users
+    4. Print all user entries
+    5. Add an input
     9. Exit
 """
     )
