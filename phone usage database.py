@@ -153,7 +153,26 @@ ID   Username
     db.close()
 
 
-def print_user_entries(): # unfinished
+def print_user_entries():  # working here 07/06
+    db = sqlite3.connect("phone_usage.db")
+    cursor = db.cursor()
+    cursor.execute(
+        '''SELECT entries.id, user.name, entries.usage FROM entries
+JOIN user ON entries.user_id = user.id ''',)
+    results = cursor.fetchall()
+    print('''
+
+ID   Username
+        ''')
+    for user in results:
+        print(
+            f"{user[0]:<5}"
+            f"{user[1]:<15}"
+            f"{user[2]:<20}"
+
+        )
+    db.commit()
+    db.close()
 
 
 # main code
@@ -176,6 +195,8 @@ while True:
     elif user_input == "3":
         print_users()
     elif user_input == "4":
+        print_user_entries()
+    elif user_input == "5":
         login()
     elif user_input == "9":
         break
