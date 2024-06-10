@@ -11,7 +11,7 @@ current_user = None
 
 def print_all():
     '''print all data'''
-    db = sqlite3.connect("phone_usage.db")
+    db = sqlite3.connect("phone_usage.db")  # add in entries to this function
     cursor = db.cursor()
     sql = "select * from phone_usage_table;"
     cursor.execute(sql)
@@ -22,9 +22,10 @@ def print_all():
 #    Country             Avg screen time
           ''')
     for phone in results:
-        hours = (results[2]) // 60
-        minutes = (results[2]) % 60  # very broken
-        time = "{}:{}".format(hours, minutes)
+        duration = phone[2]
+        hours = duration // 60
+        minutes = duration % 60  # very broken
+        time = f"{hours} hrs   {minutes} mins"
         print(
             f"{phone[0]:<5}"
             f"{phone[1]:<20}"
