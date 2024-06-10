@@ -22,10 +22,13 @@ def print_all():
 #    Country             Avg screen time
           ''')
     for phone in results:
+        hours = (results[2]) // 60
+        minutes = (results[2]) % 60  # very broken
+        time = "{}:{}".format(hours, minutes)
         print(
             f"{phone[0]:<5}"
             f"{phone[1]:<20}"
-            f"{phone[2]:<10}"
+            f"{time}"
         )
     # loop finished here
     db.close()
@@ -162,7 +165,7 @@ JOIN user ON entries.user_id = user.id ''',)
     results = cursor.fetchall()
     print('''
 
-ID   Username
+     Username       Screen time
         ''')
     for user in results:
         print(
