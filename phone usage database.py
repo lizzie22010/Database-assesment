@@ -5,6 +5,7 @@ import sqlite3
 # constants and variables
 DATABASE = "phone_usage.db"
 current_user = None
+first_run = True
 
 # functions
 
@@ -48,10 +49,14 @@ def print_all_countries():
 #    Country             Avg screen time
           ''')
     for phone in results:
+        duration = phone[2]
+        hours = duration // 60
+        minutes = duration % 60  # very broken
+        time = f"{hours} hrs   {minutes} mins"
         print(
             f"{phone[0]:<5}"
             f"{phone[1]:<20}"
-            f"{phone[2]:<10}"
+            f"{time}"
         )
     # loop finished here
     db.close()
@@ -61,7 +66,7 @@ def login():
     '''ask for username and/or create new user id'''
     db = sqlite3.connect("phone_usage.db")
     cursor = db.cursor()
-    username_ask = input("Enter username: ")
+    username_ask = input("\nEnter username: ")
     username_lower = username_ask.lower()
     user = cursor.execute(
                 '''SELECT * FROM user
@@ -74,13 +79,14 @@ def login():
                 (username_ask,))
         db.commit()
         current_user = (cursor.lastrowid)
-        print('\nNo  user found; new user created\n')
+        print('\nNew account created\n')
     else:
         current_user = user
+        print('Login succesful')
     avg_screen_time = int(input("Enter your screen time in minutes: "))
     cursor.execute(
         '''INSERT INTO entries (usage, user_id) VALUES (?, ?)''',
-        (avg_screen_time, current_user[0]))
+        (avg_screen_time, current_user))
     print('''
           Input accepted''')
 
@@ -121,7 +127,7 @@ def check_existing_user():
             username input''')
 
 
-def take_user_input():
+def take_user_input():  # inactive
     '''add a user intput into the database'''
     db = sqlite3.connect("phone_usage.db")
     cursor = db.cursor()
@@ -181,28 +187,36 @@ JOIN user ON entries.user_id = user.id ''',)
 
 # main code
 while True:
-    user_input = input(
-        """
-    What would you like to do?
-    1. Print all data
-    2. Print countries leaderboard
-    3. Print all users
-    4. Print all user entries
-    5. Add an input
-    9. Exit
-"""
-    )
-    if user_input == "1":
-        print_all()
-    elif user_input == "2":
-        print_all_countries()
-    elif user_input == "3":
-        print_users()
-    elif user_input == "4":
-        print_user_entries()
-    elif user_input == "5":
-        login()
-    elif user_input == "9":
-        break
+    if not first_run:
+        user_input = input("\nPress ENTER to continue")
     else:
-        print("That is not an option\n")
+        user_input = ''
+        first_run = False
+
+    if user_input == '':
+        user_input = input(
+            """
+What would you like to do?
+1. Print all data
+2. Print countries leaderboard
+3. Print all users
+4. Print all user entries
+5. Add an input
+0. Exit
+"""
+        )
+        if user_input == "1":
+            print_all()
+        elif user_input == "2":
+            print_all_countries()
+        elif user_input == "3":
+            print_users()
+        elif user_input == "4":
+            print_user_entries()
+        elif user_input == "5":
+            login()
+        elif user_input == "0":
+            break
+        else:
+            print("That is not an option\n")
+
