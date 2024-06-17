@@ -163,22 +163,26 @@ ID   Username
     db.close()
 
 
-def print_user_entries():  # working here 07/06
+def print_user_leaderboard():  # working here 07/06
     db = sqlite3.connect("phone_usage.db")
     cursor = db.cursor()
     cursor.execute(
         '''SELECT entries.id, user.name, entries.usage FROM entries
-JOIN user ON entries.user_id = user.id ''',)
+    JOIN user ON entries.user_id = user.id ''',)
     results = cursor.fetchall()
     print('''
 
      Username       Screen time
         ''')
-    for user in results:
+    for phone in results:
+        duration = phone[2]
+        hours = duration // 60
+        minutes = duration % 60  # very broken
+        time = f"{hours} hrs   {minutes} mins"
         print(
-            f"{user[0]:<5}"
-            f"{user[1]:<15}"
-            f"{user[2]:<20}"
+            f"{phone[0]:<5}"
+            f"{phone[1]:<20}"
+            f"{time}"
 
         )
     db.commit()
@@ -199,9 +203,10 @@ while True:
 What would you like to do?
 1. Print all data
 2. Print countries leaderboard
-3. Print all users
-4. Print all user entries
+3. Print user leaderboard
+4. Print users
 5. Add an input
+6. Rank a user
 0. Exit
 """
         )
@@ -210,12 +215,16 @@ What would you like to do?
         elif user_input == "2":
             print_all_countries()
         elif user_input == "3":
-            print_users()
+            print_user_leaderboard()
         elif user_input == "4":
-            print_user_entries()
+            print_users()
         elif user_input == "5":
             login()
+        elif user_input == "6":
+            print("\nSorry, this function is UNDER CONSTRUCTION")
         elif user_input == "0":
             break
         else:
-            print("That is not an option\n")
+            print("\nThat is not an option")
+    else:
+        print("Incorrect input")
