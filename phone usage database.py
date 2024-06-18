@@ -26,7 +26,7 @@ def print_all():
         duration = phone[2]
         hours = duration // 60
         minutes = duration % 60  # very broken
-        time = f"{hours} hrs   {minutes} mins"
+        time = f"{hours} hrs   {minutes:<3} mins"
         print(
             f"{phone[0]:<5}"
             f"{phone[1]:<20}"
@@ -51,8 +51,8 @@ def print_all_countries():
     for phone in results:
         duration = phone[2]
         hours = duration // 60
-        minutes = duration % 60  # very broken
-        time = f"{hours} hrs   {minutes} mins"
+        minutes = duration % 60
+        time = f"{hours} hrs   {minutes:<3} mins"
         print(
             f"{phone[0]:<5}"
             f"{phone[1]:<20}"
@@ -82,13 +82,13 @@ def login():
         print('\nNew account created\n')
     else:
         current_user = user
-        print('Login succesful')
+        print('Login successful')
     avg_screen_time = int(input("Enter your screen time in minutes: "))
     cursor.execute(
         '''INSERT INTO entries (usage, user_id) VALUES (?, ?)''',
-        (avg_screen_time, current_user))
+        (avg_screen_time, current_user[0]))
     print('''
-          Input accepted''')
+        Screen time {avg_screen_time} has been added to user {current_user}''') # broken here 19/06
 
     # if # username exists
     #     # ask screen time
@@ -163,7 +163,21 @@ ID   Username
     db.close()
 
 
-def print_user_leaderboard():  # working here 07/06
+def average_user():
+    db = sqlite3.connect("phone_usage.db")
+    cursor = db.cursor()
+#   user_id = current_user[0]    # broken here 19/06
+    cursor.execute(
+        '''SELECT AVG(usage) FROM entries
+WHERE user_id = ?''',
+        (4,))
+    results = cursor.fetchone()
+    print(results)
+    db.commit()
+    db.close()
+
+
+def print_user_entries():  # working here 07/06
     db = sqlite3.connect("phone_usage.db")
     cursor = db.cursor()
     cursor.execute(
@@ -177,8 +191,8 @@ def print_user_leaderboard():  # working here 07/06
     for phone in results:
         duration = phone[2]
         hours = duration // 60
-        minutes = duration % 60  # very broken
-        time = f"{hours} hrs   {minutes} mins"
+        minutes = duration % 60
+        time = f"{hours} hrs   {minutes:<3} mins"
         print(
             f"{phone[0]:<5}"
             f"{phone[1]:<20}"
@@ -203,7 +217,7 @@ while True:
 What would you like to do?
 1. Print all data
 2. Print countries leaderboard
-3. Print user leaderboard
+3. Print user entries
 4. Print users
 5. Add an input
 6. Rank a user
@@ -215,7 +229,7 @@ What would you like to do?
         elif user_input == "2":
             print_all_countries()
         elif user_input == "3":
-            print_user_leaderboard()
+            print_user_entries()
         elif user_input == "4":
             print_users()
         elif user_input == "5":
@@ -224,6 +238,8 @@ What would you like to do?
             print("\nSorry, this function is UNDER CONSTRUCTION")
         elif user_input == "0":
             break
+        elif user_input == "7":
+            average_user()
         else:
             print("\nThat is not an option")
     else:
