@@ -25,7 +25,7 @@ def print_all():
     for phone in results:
         duration = phone[2]
         hours = duration // 60
-        minutes = duration % 60  # very broken
+        minutes = duration % 60
         time = f"{hours} hrs   {minutes:<3} mins"
         print(
             f"{phone[0]:<5}"
@@ -81,14 +81,15 @@ def login():
         current_user = (cursor.lastrowid)
         print('\nNew account created\n')
     else:
-        current_user = user
-        print('Login successful')
+        current_user = user[0]
+        print('\nLogin successful\n')
     avg_screen_time = int(input("Enter your screen time in minutes: "))
     cursor.execute(
         '''INSERT INTO entries (usage, user_id) VALUES (?, ?)''',
-        (avg_screen_time, current_user[0]))
+        (avg_screen_time, current_user))
     print('''
-        Screen time {avg_screen_time} has been added to user {current_user}''') # broken here 19/06
+Screen time  * {time} minutes *  has been added to user  * {user} *'''
+          .format(time=avg_screen_time, user=username_ask))
 
     # if # username exists
     #     # ask screen time
@@ -166,13 +167,27 @@ ID   Username
 def average_user():
     db = sqlite3.connect("phone_usage.db")
     cursor = db.cursor()
-#   user_id = current_user[0]    # broken here 19/06
-    cursor.execute(
-        '''SELECT AVG(usage) FROM entries
-WHERE user_id = ?''',
-        (4,))
-    results = cursor.fetchone()
-    print(results)
+    username_ask = input("\nEnter username: ")
+    username_lower = username_ask.lower()
+    user = cursor.execute(
+                '''SELECT * FROM user
+                    WHERE name = ?''',
+                (username_lower,)).fetchone()
+    user_id = user[0]
+    if user is None:
+        print('That username is not in my database.')
+    else:
+
+        cursor.execute(
+            '''SELECT AVG(usage) FROM entries
+    WHERE user_id = ?''',
+            (user_id,))
+        results = cursor.fetchone()
+        results = results[0]
+        hours = results // 60
+        minutes = results % 60
+        time = f"{hours} hrs   {minutes:<3} mins"
+        print(time)
     db.commit()
     db.close()
 
