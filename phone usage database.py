@@ -33,6 +33,25 @@ def print_all():
             f"{time}"
         )
     # loop finished here
+    cursor.execute(
+        '''SELECT entries.id, user.name, entries.usage FROM entries
+    JOIN user ON entries.user_id = user.id ''',)
+    results = cursor.fetchall()
+    print('''
+
+     Username       Screen time
+        ''')
+    for phone in results:
+        duration = phone[2]
+        hours = duration // 60
+        minutes = duration % 60
+        time = f"{hours} hrs   {minutes:<3} mins"
+        print(
+            f"{phone[0]:<5}"
+            f"{phone[1]:<20}"
+            f"{time}"
+
+        )
     db.close()
 
 
@@ -106,7 +125,7 @@ Screen time  * {time} minutes *  has been added to user  * {user} *'''
     db.close()
 
 
-def check_existing_user():
+def check_existing_user():  # inactive
     '''check if user already exists'''
     db = sqlite3.connect("phone_usage.db")
     cursor = db.cursor()
@@ -165,6 +184,7 @@ ID   Username
 
 
 def average_user():
+    '''Find the average screen time for a user'''
     db = sqlite3.connect("phone_usage.db")
     cursor = db.cursor()
     username_ask = input("\nEnter username: ")
@@ -185,8 +205,10 @@ def average_user():
         results = cursor.fetchone()
         results = results[0]
         hours = results // 60
+        hours = int(round(hours, 2))
         minutes = results % 60
-        time = f"{hours} hrs   {minutes:<3} mins"
+        minutes = int(round(minutes, 2))
+        time = f"{hours} hrs   {minutes} mins" 
         print(time)
     db.commit()
     db.close()
@@ -235,7 +257,7 @@ What would you like to do?
 3. Print user entries
 4. Print users
 5. Add an input
-6. Rank a user
+6. Find user average
 0. Exit
 """
         )
@@ -250,11 +272,9 @@ What would you like to do?
         elif user_input == "5":
             login()
         elif user_input == "6":
-            print("\nSorry, this function is UNDER CONSTRUCTION")
+            average_user()
         elif user_input == "0":
             break
-        elif user_input == "7":
-            average_user()
         else:
             print("\nThat is not an option")
     else:
