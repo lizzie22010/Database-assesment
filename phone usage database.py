@@ -194,7 +194,7 @@ def average_user():
                     WHERE name = ?''',
                 (username_lower,)).fetchone()
     user_id = user[0]
-    if user is None:
+    if user_id is None:
         print('That username is not in my database.')
     else:
 
@@ -272,7 +272,10 @@ What would you like to do?
         elif user_input == "5":
             login()
         elif user_input == "6":
-            average_user()
+            try: 
+                average_user()
+            except:
+                print('That username is not in my database.')
         elif user_input == "0":
             break
         else:
