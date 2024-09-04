@@ -91,10 +91,12 @@ def login():
                 '''SELECT * FROM user
                     WHERE name = ?''',
                 (username_lower,)).fetchone()
+    if user is "":
+        print("no input entered. Please try again")
     if user is None:
         cursor.execute(
                 '''INSERT INTO user (
-             name) VALUES (?)''',
+             name) VALUES (?)''',                               #problem here: accepts a blank input. This should not happen.
                 (username_ask,))
         db.commit()
         current_user = (cursor.lastrowid)
@@ -102,13 +104,16 @@ def login():
     else:
         current_user = user[0]
         print('\nLogin successful\n')
-    avg_screen_time = int(input("Enter your screen time in minutes: "))
-    cursor.execute(
-        '''INSERT INTO entries (usage, user_id) VALUES (?, ?)''',
-        (avg_screen_time, current_user))
-    print('''
-Screen time  * {time} minutes *  has been added to user  * {user} *'''
-          .format(time=avg_screen_time, user=username_ask))
+    try:
+        avg_screen_time = int(input("Enter your screen time in minutes: "))
+        cursor.execute(
+            '''INSERT INTO entries (usage, user_id) VALUES (?, ?)''',
+            (avg_screen_time, current_user))
+        print('''
+    Screen time  * {time} minutes *  has been added to user  * {user} *'''
+            .format(time=avg_screen_time, user=username_ask))
+    except:
+        print("\nInput is not an integer, please try again")
 
     # if # username exists
     #     # ask screen time
@@ -151,12 +156,14 @@ def take_user_input():  # inactive
     '''add a user intput into the database'''
     db = sqlite3.connect("phone_usage.db")
     cursor = db.cursor()
-    avg_screen_time = int(input("Enter your average screen time in minutes: "))
-    cursor.execute(
-        '''INSERT INTO entries (
-        usage) VALUES (?,)''',
-        (avg_screen_time))
-
+    try:
+        avg_screen_time = int(input("Enter your average screen time in minutes: "))
+        cursor.execute(
+            '''INSERT INTO entries (
+            usage) VALUES (?,)''',
+            (avg_screen_time))
+    except:
+        print("That is not an integer")
     db.commit()
     db.close()
     print('''
