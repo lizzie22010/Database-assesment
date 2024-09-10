@@ -90,7 +90,7 @@ def login():
         username_ask = input("\nEnter username: ")
         if username_ask == "":
             print("\nNo input entered. Please try again")
-        if username_ask.isdigit():
+        elif username_ask.isdigit():
             print("\nInput cannot be a number. Please try again.")
         else:
             username_lower = username_ask.lower()
@@ -106,8 +106,6 @@ def login():
                 (username_ask,))
         db.commit()
         current_user = (cursor.lastrowid)
-        if user == "":
-            print("Try again")
         print('\nNew account created\n')
     else:
         current_user = user[0]
